@@ -115,16 +115,16 @@
         <div id="card-details">
             <div class="form-group">
                 <label for="card-number">Card Number</label>
-                <input type="text" id="card-number" name="card-number" placeholder="Card Number" required pattern="\d*">
+                <input type="text" id="card-number" name="card-number" placeholder="Card Number" required>
                 <img id="card-logo" src="" alt="Card Logo">
             </div>
             <div class="form-group">
                 <label for="card-expiry">Expiry Date</label>
-                <input type="text" id="card-expiry" name="card-expiry" placeholder="MM/YY" required pattern="\d*">
+                <input type="text" id="card-expiry" name="card-expiry" placeholder="MM/YY" required>
             </div>
             <div class="form-group">
                 <label for="card-cvc">CVC</label>
-                <input type="text" id="card-cvc" name="card-cvc" placeholder="CVC" required pattern="\d*">
+                <input type="text" id="card-cvc" name="card-cvc" placeholder="CVC" required>
             </div>
         </div>
 
@@ -170,19 +170,38 @@
             const cardNumber = this.value;
             const cardLogo = document.getElementById("card-logo");
 
-            if (cardNumber.length === 0) {
-                cardLogo.style.display = "none";
-            } else if (cardNumber.startsWith("4")) {
+            // Card type and length restrictions
+            let maxLength;
+            if (cardNumber.startsWith("4")) { // Visa
                 cardLogo.src = "https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"; // Visa logo URL
                 cardLogo.style.display = "block";
-            } else if (cardNumber.startsWith("5")) {
+                maxLength = 16;
+            } else if (cardNumber.startsWith("5")) { // MasterCard
                 cardLogo.src = "https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg"; // MasterCard logo URL
                 cardLogo.style.display = "block";
-            } else if (cardNumber.startsWith("3")) {
+                maxLength = 16;
+            } else if (cardNumber.startsWith("3")) { // American Express
                 cardLogo.src = "https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo_%282018%29.svg"; // American Express logo URL
                 cardLogo.style.display = "block";
+                maxLength = 15;
             } else {
                 cardLogo.style.display = "none";
+                maxLength = 16;
+            }
+
+            // Set max length for card number
+            document.getElementById("card-number").maxLength = maxLength;
+        });
+
+        // Restrict CVC length based on card type
+        document.getElementById("card-number").addEventListener("input", function() {
+            const cardNumber = this.value;
+            const cvcField = document.getElementById("card-cvc");
+            
+            if (cardNumber.startsWith("3")) { // American Express
+                cvcField.maxLength = 4;
+            } else {
+                cvcField.maxLength = 3;
             }
         });
     </script>

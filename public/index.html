@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceRemit Integration</title>
+    <script src="https://cdn.spaceremit.com/js/spaceremit.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #spaceremit-form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            box-sizing: border-box;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        #card-details {
+            display: none;
+        }
+        .product-info {
+            margin-bottom: 20px;
+        }
+        .product-info span {
+            display: block;
+            font-weight: bold;
+        }
+        #card-logo {
+            display: none;
+            margin-top: 5px;
+            height: 24px;
+        }
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <form id="spaceremit-form" action="http://localhost:3000/process-payment" method="POST">
+        <div class="product-info">
+            <span>Product: Fancy Gadget</span>
+            <span>Amount: $100 USD</span>
+        </div>
+        <input type="hidden" name="amount" value="100">
+        <input type="hidden" name="currency" value="USD">
+
+        <div class="form-group">
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" name="fullname" placeholder="Full Name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Email" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
+        </div>
+
+        <div class="form-group">
+            <input type="radio" id="local-payment" name="sp-pay-type-radio" value="local" checked>
+            <label for="local-payment">Local Payment</label>
+            <input type="radio" id="card-payment" name="sp-pay-type-radio" value="card">
+            <label for="card-payment">Card Payment</label>
+        </div>
+
+        <div id="card-details">
+            <div class="form-group">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" name="card-number" placeholder="Card Number" required>
+                <img id="card-logo" src="" alt="Card Logo">
+            </div>
+            <div class="form-group">
+                <label for="card-expiry">Expiry Date</label>
+                <input type="text" id="card-expiry" name="card-expiry" placeholder="MM/YY" required>
+            </div>
+            <div class="form-group">
+                <label for="card-cvc">CVC</label>
+                <input type="text" id="card-cvc" name="card-cvc" placeholder="CVC" required>
+            </div>
+        </div>
+
+        <button type="submit">Pay Now</button>
+    </form>
+
+    <script>
+        const SP_PUBLIC_KEY = "YOUR_PUBLIC_KEY"; // Replace with your public key
+        const SP_PRIVATE_KEY = "YOUR_PRIVATE_KEY"; // Replace with your private key
+        const SP_FORM_ID = "#spaceremit-form";
+        const SP_SELECT_RADIO_NAME = "sp-pay-type-radio";
+
+        document.querySelector(SP_FORM_ID).addEventListener("submit", function(event) {
+            event.preventDefault();
+            // Your payment processing logic here
+            alert("Payment form submitted!");
+        });
+
+        document.querySelector("input[name='" + SP_SELECT_RADIO_NAME + "'][value='card']").addEventListener('change', function() {
+            document.getElementById("card-details").style.display = 'block';
+        });
+
+        document.querySelector("input[name='" + SP_SELECT_RADIO_NAME + "'][value='local']").addEventListener('change', function() {
+            document.getElementById("card-details").style.display = 'none';
+        });
+
+        document.getElementById("card-number").addEventListener("input", function() {
+            const cardNumber = this.value;
+            const cardLogo = document.getElementById("card-logo");
+
+            if (cardNumber.length === 0) {
+                cardLogo.style.display = "none";
+            } else if (cardNumber.startsWith("4")) {
+                cardLogo.src = "https://upload.wikimedia.org/wikipedia/commons/0/04/Visa.svg"; // Visa logo URL
+                cardLogo.style.display = "block";
+            } else if (cardNumber.startsWith("5")) {
+                cardLogo.src = "https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg"; // MasterCard logo URL
+                cardLogo.style.display = "block";
+            } else if (cardNumber.startsWith("3")) {
+                cardLogo.src = "https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo_%282018%29.svg"; // American Express logo URL
+                cardLogo.style.display = "block";
+            } else {
+                cardLogo.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>
